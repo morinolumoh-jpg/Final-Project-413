@@ -226,7 +226,6 @@ function nl_poll() {
         <h3>What do you think of this post?</h3>
         <form class="poll-wrapper-form" id="poll-wrapper-form">
             <label><input type="radio" name="vote" value="good"> Good</label>
-            <label><input type="radio" name="vote" value="average"> Average</label>
             <label><input type="radio" name="vote" value="bad"> Bad</label>
             <button type="submit">Vote</button>
         </form>
@@ -267,10 +266,9 @@ add_action( 'admin_menu', 'nl_admin_menu' );
 
 function nl_render_admin_page() {
     $subscribers = get_option( 'nl_subscribers', array() );
-    $votes       = get_option( 'nl_poll_votes', array( 'good' => 0, 'average' => 0, 'bad' => 0 ) );
+    $votes       = get_option( 'nl_poll_votes', array( 'good' => 0, 'bad' => 0 ) );
 
     $good    = intval( $votes['good']    ?? 0 );
-    $average = intval( $votes['average'] ?? 0 );
     $bad     = intval( $votes['bad']     ?? 0 );
     $total   = $good + $average + $bad;
 
@@ -298,7 +296,6 @@ function nl_render_admin_page() {
         echo '<p>No votes yet.</p>';
     } else {
         $pGood    = round( ( $good    / $total ) * 100 );
-        $pAverage = round( ( $average / $total ) * 100 );
         $pBad     = round( ( $bad     / $total ) * 100 );
 
         echo '<p><strong>Total votes: ' . $total . '</strong></p>';
@@ -306,14 +303,13 @@ function nl_render_admin_page() {
         echo '<thead><tr><th>Option</th><th>Votes</th><th>Percentage</th></tr></thead>';
         echo '<tbody>';
         echo '<tr><td>Good</td><td>'    . $good    . '</td><td>' . $pGood    . '%</td></tr>';
-        echo '<tr><td>Average</td><td>' . $average . '</td><td>' . $pAverage . '%</td></tr>';
         echo '<tr><td>Bad</td><td>'     . $bad     . '</td><td>' . $pBad     . '%</td></tr>';
         echo '</tbody>';
         echo '</table>';
 
         /* reset button */
         if ( isset( $_POST['nl_reset_votes'] ) && check_admin_referer( 'nl_reset_votes_action' ) ) {
-            update_option( 'nl_poll_votes', array( 'good' => 0, 'average' => 0, 'bad' => 0 ) );
+            update_option( 'nl_poll_votes', array( 'good' => 0, 'bad' => 0 ) );
             echo '<p style="color:green;">Votes reset successfully.</p>';
         }
 
